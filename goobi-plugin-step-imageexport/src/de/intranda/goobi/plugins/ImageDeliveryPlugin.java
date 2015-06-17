@@ -131,7 +131,7 @@ public class ImageDeliveryPlugin implements IStepPlugin, IPlugin {
         //
         //        // - an anderen Ort kopieren
         //        String destination = ConfigPlugins.getPluginConfig(this).getString("destinationFolder", "/opt/digiverso/pdfexport/");
-        String donwloadServer = ConfigPlugins.getPluginConfig(this).getString("donwloadServer", "http://leiden01.intranda.com/goobi/");
+        String donwloadServer = ConfigPlugins.getPluginConfig(this).getString("donwloadServer", "http://amsterdam01.intranda.com/");
         String downloadUrl = donwloadServer + destFile.getName();
 
         // - Name/Link als Property speichern

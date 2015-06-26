@@ -2,8 +2,6 @@ package de.intranda.goobi.plugins;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -23,7 +21,6 @@ import org.goobi.beans.Processproperty;
 import org.goobi.beans.Step;
 
 import de.sub.goobi.config.ConfigPlugins;
-import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -76,7 +73,7 @@ public class ImageDeliveryPlugin implements IStepPlugin, IPlugin {
         }
 
         File compressedFile =
-                new File(ConfigurationHelper.getInstance().getTemporaryFolder() + System.currentTimeMillis() + md5.getMD5() + "_"
+                new File(ConfigPlugins.getPluginConfig(this).getString("destinationFolder", "/opt/digiverso/goobi/export/"), md5.getMD5() + "_"
                         + process.getTitel() + ".zip");
 
         File imageFolder = new File(imagesFolderName);
@@ -84,8 +81,8 @@ public class ImageDeliveryPlugin implements IStepPlugin, IPlugin {
         if ((filenames == null) || (filenames.length == 0)) {
             return false;
         }
-        File destFile =
-                new File(ConfigPlugins.getPluginConfig(this).getString("destinationFolder", "/opt/digiverso/goobi/export/"), compressedFile.getName());
+//        File destFile =
+//                new File(ConfigPlugins.getPluginConfig(this).getString("destinationFolder", "/opt/digiverso/goobi/export/"), compressedFile.getName());
 
         log.debug("Found " + filenames.length + " files.");
 
@@ -96,14 +93,14 @@ public class ImageDeliveryPlugin implements IStepPlugin, IPlugin {
             return false;
         }
 
-        log.info("Validating zip-archive");
-        byte[] origArchiveAfterZipChecksum = null;
-        try {
-            origArchiveAfterZipChecksum = ArchiveUtils.createChecksum(compressedFile);
-        } catch (NoSuchAlgorithmException | IOException e) {
-            log.error(process.getTitel() + ": " + "Failed to validate zip archive: " + e.toString() + ". Aborting.");
-            return false;
-        }
+//        log.info("Validating zip-archive");
+//        byte[] origArchiveAfterZipChecksum = null;
+//        try {
+//            origArchiveAfterZipChecksum = ArchiveUtils.createChecksum(compressedFile);
+//        } catch (NoSuchAlgorithmException | IOException e) {
+//            log.error(process.getTitel() + ": " + "Failed to validate zip archive: " + e.toString() + ". Aborting.");
+//            return false;
+//        }
 
         if (ArchiveUtils.validateZip(compressedFile, true, imageFolder, filenames.length)) {
             log.info("Zip archive for " + process.getTitel() + " is valid");
@@ -115,24 +112,24 @@ public class ImageDeliveryPlugin implements IStepPlugin, IPlugin {
 
         // ////////copying archive file and validating copy
         log.info("Copying zip archive for " + process.getTitel() + " to archive");
-        try {
-            ArchiveUtils.copyFile(compressedFile, destFile);
-            // validation
-            if (!MessageDigest.isEqual(origArchiveAfterZipChecksum, ArchiveUtils.createChecksum(destFile))) {
-                log.error(process.getTitel() + ": " + "Error copying archive file to archive: Copy is not valid. Aborting.");
-                return false;
-            }
-        } catch (IOException | NoSuchAlgorithmException e) {
-            log.error(process.getTitel() + ": " + "Error validating copied archive. Aborting.");
-            return false;
-        }
-        log.info("Zip archive copied to " + destFile.getAbsolutePath() + " and found to be valid.");
+//        try {
+//            ArchiveUtils.copyFile(compressedFile, destFile);
+//            // validation
+//            if (!MessageDigest.isEqual(origArchiveAfterZipChecksum, ArchiveUtils.createChecksum(destFile))) {
+//                log.error(process.getTitel() + ": " + "Error copying archive file to archive: Copy is not valid. Aborting.");
+//                return false;
+//            }
+//        } catch (IOException | NoSuchAlgorithmException e) {
+//            log.error(process.getTitel() + ": " + "Error validating copied archive. Aborting.");
+//            return false;
+//        }
+//        log.info("Zip archive copied to " + destFile.getAbsolutePath() + " and found to be valid.");
 
         //
         //        // - an anderen Ort kopieren
         //        String destination = ConfigPlugins.getPluginConfig(this).getString("destinationFolder", "/opt/digiverso/pdfexport/");
         String donwloadServer = ConfigPlugins.getPluginConfig(this).getString("donwloadServer", "http://amsterdam01.intranda.com/");
-        String downloadUrl = donwloadServer + destFile.getName();
+        String downloadUrl = donwloadServer + compressedFile.getName();
 
         // - Name/Link als Property speichern
 

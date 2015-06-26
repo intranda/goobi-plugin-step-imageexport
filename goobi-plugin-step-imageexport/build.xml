@@ -55,6 +55,7 @@
 		<!--<delete dir="${dir.build}" />-->
 		<delete dir="${dir.deploy}" />
 		<delete dir="${dir.testreports}" />
+	    <delete dir="${dir.build}" />
 	</target>
 
 	<!-- Create needed directories -->
@@ -63,6 +64,7 @@
 		<mkdir dir="${dir.build}" />
 		<mkdir dir="${dir.deploy}" />
 		<mkdir dir="${dir.testreports}" />
+	    <delete dir="${dir.build}" />
 	</target>
 
 	<!-- Store git revision in internal variable -->
@@ -153,7 +155,7 @@
 	              RUNNABLE JAR
 		 ================================= -->
 
-	<target name="jar.runnable" depends="git.revision">
+	<target name="jar.runnable" depends="git.revision, clean, createDirs">
 		<echo>Compile sources ...</echo>
 		<antcall target="compile" />
 

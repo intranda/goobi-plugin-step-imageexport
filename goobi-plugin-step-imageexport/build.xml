@@ -64,7 +64,7 @@
 		<mkdir dir="${dir.build}" />
 		<mkdir dir="${dir.deploy}" />
 		<mkdir dir="${dir.testreports}" />
-	    <delete dir="${dir.build}" />
+	    <mkdir dir="${dir.build}" />
 	</target>
 
 	<!-- Store git revision in internal variable -->
